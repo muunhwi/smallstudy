@@ -1,8 +1,11 @@
 프로젝트 소개
 ---
-이 프로젝트는 클라우드 서비스 학습과 Spring Boot 복습을 목적으로 개발되었습니다.  
-스터디를 생성하고 참여자를 모집할 수 있는 기능을 제공하는 형태로 구현되었습니다.    
-주소: [https://www.smallstudy.click/main](https://www.smallstudy.click/main)
+## Small Study
+
+이 프로젝트는 **클라우드 서비스 학습**과 **Spring Boot 복습**을 목적으로 개발되었습니다.  
+스터디를 생성하고 참여자를 모집할 수 있는 기능을 제공하는 형태로 구현되었습니다.
+
+**주소**: [https://www.smallstudy.click/main](https://www.smallstudy.click/main)
 ---
 Environment  
 [![Java](https://img.shields.io/badge/Java-007396?style=flat-square&logo=java&logoColor=white)](https://www.oracle.com/java/)
