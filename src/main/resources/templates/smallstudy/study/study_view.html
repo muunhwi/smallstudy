@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/study_layout :: layout(~{::title},~{::section}, ~{::script})}">
+<head>
+  <title>스터디</title>
+</head>
+<body>
+<section class="flex flex-col items-center justify-center mt-8">
+  <div class="w-full max-w-screen-xl flex flex-col lg:flex-row lg:space-x-4 space-y-4 lg:space-y-0 px-4 lg:px-0">
+    <div class="flex-2 bg-white p-6 rounded-lg shadow-sm w-full">
+      <div class="mb-4">
+        <div class="flex items-center justify-between">
+          <div th:text="${study.title}" class="text-3xl font-bold text-gray-800 tracking-wide leading-tight mb-4 text-blue-500"> </div>
+          <button th:if="${isAuthor}" id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+            관리하기
+            <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+          </svg>
+          </button>
+          <div id="dropdown"
+               class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+              <li>
+                <a th:href="@{/study/{id}/update(id=${study.id})}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">수정하기</a>
+              </li>
+              <li>
+                <a th:href="@{/study/{id}/delete(id=${study.id})}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onclick="return confirmDelete();">삭제하기</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center space-x-4 mb-4">
+        <!-- Profile Image -->
+        <img th:src="${!#strings.isEmpty(member.imgPath) ? @fileService.getImageFilePath(member) : '/img/default.png'}"
+             class="w-8 h-8 rounded-full object-cover"
+             alt="Profile Image">
+
+        <!-- Nickname -->
+        <span class="text-sm text-gray-600" th:text="${member.nickname}"></span>
+        <span class="text-sm text-gray-600" th:text="${study.lastModifiedString}"></span>
+      </div>
+
+      <div th:if="${isUser && !isAuthor && canApply}" class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+        스터디를 신청하실 수 있습니다!
+        <a th:if="${study.formId != null}"
+           th:href="@{/study/apply(studyId=${study.id},formId=${study.formId})}"
+           onclick="return confirmApply();"
+           class="inline-flex items-center font-medium text-blue-600 hover:text-blue-800 underline decoration-blue-500 hover:decoration-blue-700">
+          <svg class="w-4 h-4 mr-1 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-9V5a1 1 0 10-2 0v4H5a1 1 0 100 2h4v4a1 1 0 102 0v-4h4a1 1 0 100-2h-4z"/>
+          </svg>
+          스터디 신청하러 가기!
+        </a>
+
+        <a th:if="${study.formId == null}"
+           th:href="@{/study/apply/no-form(studyId=${study.id})}"
+           onclick="return confirmApply();"
+           class="inline-flex items-center font-medium text-blue-600 hover:text-blue-800 underline decoration-blue-500 hover:decoration-blue-700">
+          <svg class="w-4 h-4 mr-1 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-9V5a1 1 0 10-2 0v4H5a1 1 0 100 2h4v4a1 1 0 102 0v-4h4a1 1 0 100-2h-4z"/>
+          </svg>
+          스터디 신청하러 가기!
+        </a>
+      </div>
+
+      <div th:if="${isAuthor && #strings.isEmpty(study.formTitle) && canApply}" class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+        신청 폼을 등록하실 수 있습니다!
+        <a th:href="@{/study/form(studyId=${study.id})}"
+           class="inline-flex items-center font-medium text-blue-600 hover:text-blue-800 underline decoration-blue-500 hover:decoration-blue-700">
+        <svg class="w-4 h-4 mr-1 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-9V5a1 1 0 10-2 0v4H5a1 1 0 100 2h4v4a1 1 0 102 0v-4h4a1 1 0 100-2h-4z"/>
+        </svg>
+        등록하러 가기
+      </a>
+      </div>
+
+      <div th:if="${isAuthor && !#strings.isEmpty(study.formTitle)}"
+           class="p-6 mb-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow-md" role="alert">
+        <div class="flex items-center mb-2">
+          <span class="text-lg font-semibold text-gray-800 dark:text-gray-300 mr-2">등록된 폼:</span>
+          <span class="text-base text-gray-600 dark:text-gray-400" th:text="${study.formTitle}"></span>
+        </div>
+        <div class="mt-3 flex space-x-3">
+          <a th:href="@{/study/form/view(formId=${study.formId})}"
+             class="px-4 py-2 rounded-md font-medium text-white bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600">
+            폼 보기
+          </a>
+        </div>
+      </div>
+
+      <div id="editor" class="mt-4"></div>
+      <div id="contents" th:data-contents="${study.contents}"></div>
+      <div id="alarm" th:data-end="${deadLine}"></div>
+
+    </div>
+  </div>
+</section>
+
+<script src="/js/study/custom_quill_view.js"></script>
+</body>
+</html>

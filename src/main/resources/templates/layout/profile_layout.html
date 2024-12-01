@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html th:fragment="layout (content, script)" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/output.css" rel="stylesheet"/>
+    <title>프로필</title>
+</head>
+<body class="h-full bg-gray-100">
+<nav th:replace="~{layout/nav_layout :: nav}"></nav>
+<div class="max-w-screen-xl mx-auto p-4 mt-8 space-y-6">
+    <div class="flex flex-wrap lg:flex-nowrap lg:space-x-6 space-y-6 lg:space-y-0">
+        <div class="w-full lg:w-1/6 h-auto bg-white text-gray-900 border border-gray-200 rounded-lg shadow-md bg-blue-100 flex flex-col">
+
+            <div class="inline-flex items-center w-full px-4 py-2 text-sm font-medium border-b border-blue-100 bg-blue-100">
+                프로필
+            </div>
+
+            <a th:href="@{/profile/region}"
+               th:classappend="${type.equals('region')} ? 'bg-gray-100 hover:text-blue-700' : ''"
+               class="inline-flex items-center w-full px-4 py-2 text-sm font-medium border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white">
+                관심 지역
+            </a>
+
+            <a th:href="@{/profile/category}"
+               class="inline-flex items-center w-full px-4 py-2 text-sm font-medium border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white">
+                관심 분야
+            </a>
+
+            <a th:href="@{/profile}"
+               th:classappend="${type.equals('profile')} ? 'bg-gray-100 hover:text-blue-700' : ''"
+               class="inline-flex items-center w-full px-4 py-2 text-sm font-medium hover:bg-gray-100 hover:text-blue-700 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white rounded-b-lg">
+                계정
+            </a>
+
+            <a th:href="@{/profile/table}"
+               th:classappend="${type.equals('table')} ? 'bg-gray-100 hover:text-blue-700' : ''"
+               class="inline-flex items-center w-full px-4 py-2 text-sm font-medium hover:bg-gray-100 hover:text-blue-700 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white rounded-b-lg">
+                스터디 목록
+            </a>
+
+            <a th:href="@{/profile/apply}"
+               th:classappend="${type.equals('apply')} ? 'bg-gray-100 hover:text-blue-700' : ''"
+               class="inline-flex items-center w-full px-4 py-2 text-sm font-medium hover:bg-gray-100 hover:text-blue-700 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white rounded-b-lg">
+                신청한 스터디 목록
+            </a>
+        </div>
+        <section th:replace="${content}">
+
+        </section>
+    </div>
+</div>
+
+<script th:replace="${script}"></script>
+<script src="/node_modules/flowbite/dist/flowbite.min.js"></script>
+</body>
+</html>

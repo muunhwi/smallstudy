@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html th:fragment="layout (title, content, script)" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/output.css" rel="stylesheet"/>
+    <link href="/node_modules/quill/dist/quill.snow.css" rel="stylesheet">
+    <link href="/css/custom_quill.css" rel="stylesheet">
+    <title th:replace="${title}">Title</title>
+</head>
+<body class="h-full bg-gray-100">
+  <nav th:replace="~{layout/nav_layout :: nav}"></nav>
+  <section th:replace="${content}">
+  </section>
+  <script src="/node_modules/quill/dist/quill.js"></script>
+  <script src="/node_modules/flowbite/dist/flowbite.min.js"></script>
+  <script th:if="${script != null}" th:replace="${script}"></script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/profile_layout :: layout(~{::section}, ~{::script})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/output.css" rel="stylesheet"/>
+    <title>프로필</title>
+</head>
+<body>
+
+<section  class="w-full lg:flex-grow bg-white border border-gray-200 p-8 rounded-lg shadow-md">
+
+    <nav class="mt-4 flex justify-center"
+         th:with="start=${(list.number/maxPage)*maxPage + 1}, end=(${(list.totalPages == 0) ? 1 : (start + (maxPage - 1) < list.totalPages ? start + (maxPage - 1) : list.totalPages)})">
+        <ul class="flex space-x-2">
+            <li th:if="${start > 1}">
+                <a th:href="@{/profile/apply(page=0)}"
+                   class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-blue-500 hover:text-white">&lt;&lt;</a>
+            </li>
+            <li th:if="${start > 1}">
+                <a th:href="@{/profile/apply(page=${start - maxPage})}"
+                   class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-blue-500 hover:text-white">&lt;</a>
+            </li>
+
+            <li th:each="page: ${#numbers.sequence(start, end)}">
+                <a th:classappend="${selected == page} ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-blue-500 hover:text-white'"
+                   th:text="${page}" th:href="@{/profile/apply(page=${page - 1})}"
+                   class="px-3 py-1 border rounded-lg">
+                </a>
+            </li>
+
+            <li th:if="${end < list.totalPages}">
+                <a th:href="@{/profile/apply(page=${start + maxPage})}"
+                   class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-blue-500 hover:text-white">&gt;</a>
+            </li>
+            <li th:if="${end < list.totalPages}">
+                <a th:href="@{/profile/apply(page=${list.totalPages - 1})}"
+                   class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-blue-500 hover:text-white">&gt;&gt;</a>
+            </li>
+        </ul>
+    </nav>
+
+    <p class="mt-5">재신청을 원하신다면, 신청한 폼의 수정을 원한다면, 스터디 신청 취소 후 다시 신청해주세요.</p>
+
+    <table class="min-w-full bg-white border mt-5">
+        <thead>
+        <tr>
+            <th class="py-2 px-4 border-b font-semibold text-gray-700">제목</th>
+            <th class="py-2 px-4 border-b font-semibold text-gray-700">신청일자</th>
+            <th class="py-2 px-4 border-b font-semibold text-gray-700">신청 상태</th>
+            <th class="py-2 px-4 border-b font-semibold text-gray-700">폼 보기</th>
+            <th class="py-2 px-4 border-b font-semibold text-gray-700">취소</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="app : ${list}" class="border-t">
+            <!-- Title with hyperlink -->
+            <td class="py-2 px-4 border-b">
+                <a th:href="@{/study/{id}(id=${app.studyId})}" th:text="${app.title}" class="text-blue-500 text-center underline">Application Title</a>
+            </td>
+
+            <td class="py-2 px-4 border-b text-center" th:text="${app.applicationDateString}">Application Date</td>
+
+            <td class="py-2 px-4 border-b text-center" th:text="${app.status}">Status</td>
+
+            <td class="py-2 px-4 border-b text-center">
+                <div th:if="${app.formId != null}">
+                    <a th:href="@{/study/apply/view/readonly(formId=${app.formId}, memberId=${app.memberId})}" class="text-blue-500 underline">폼 보기</a>
+                </div>
+            </td>
+
+            <td class="py-2 px-4 border-b text-center">
+                <div th:if="${app.status == 'APPLIED'}">
+                    <a th:href="@{/study/applicant/cancel(studyId=${app.studyId}, page=${pageNumber})}" class="text-blue-500 underline" onclick="onRejectFormSubmit(event)">신청 취소</a>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+<script src="/js/profile/profile_apply.js"></script>
+</body>
+</html>

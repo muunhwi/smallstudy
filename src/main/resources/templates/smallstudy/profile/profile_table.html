@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/profile_layout :: layout(~{::section}, ~{::script})}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/css/output.css" rel="stylesheet"/>
+  <title>프로필</title>
+</head>
+<body>
+<section class="w-full lg:flex-grow bg-white border border-gray-200 p-8 rounded-lg shadow-md">
+  <div class="max-w-screen-xl mx-auto p-4 mt-4 space-y-6">
+    <h1 class="text-2xl font-bold text-gray-900">스터디 목록</h1>
+
+    <!-- Pagination -->
+    <nav class="mt-4 flex justify-center"
+         th:with="start=${(list.number/maxPage)*maxPage + 1}, end=(${(list.totalPages == 0) ? 1 : (start + (maxPage - 1) < list.totalPages ? start + (maxPage - 1) : list.totalPages)})">
+      <ul class="flex space-x-2">
+        <li th:if="${start > 1}">
+          <a th:href="@{/profile/table(page=0)}"
+             class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-blue-500 hover:text-white">&lt;&lt;</a>
+        </li>
+        <li th:if="${start > 1}">
+          <a th:href="@{/profile/table(page=${start - maxPage + 1})}"
+             class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-blue-500 hover:text-white">&lt;</a>
+        </li>
+
+        <li th:each="page: ${#numbers.sequence(start, end)}">
+          <a th:classappend="${selected == page} ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-blue-500 hover:text-white'"
+             th:text="${page}" th:href="@{/profile/table(page=${page - 1})}"
+             class="px-3 py-1 border rounded-lg">
+          </a>
+        </li>
+
+        <li th:if="${end < list.totalPages}">
+          <a th:href="@{/profile/table(page=${start + maxPage - 1})}"
+             class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-blue-500 hover:text-white">&gt;</a>
+        </li>
+        <li th:if="${end < list.totalPages}">
+          <a th:href="@{/profile/table(page=${list.totalPages - 1})}"
+             class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-blue-500 hover:text-white">&gt;&gt;</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="flex justify-end">
+      <a th:href="@{/study}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">스터디 생성</a>
+    </div>
+    <!-- 게시글 목록 -->
+    <div class="bg-white shadow-md rounded-lg ">
+      <ul class="divide-y divide-gray-200">
+        <li th:if="${list.isEmpty()}" class="py-6 text-center text-gray-500">
+          생성한 스터디 목록이 없습니다.
+        </li>
+        <li th:each="study : ${list}" class="p-4 flex justify-between items-start space-x-4 bg-white">
+          <!-- 게시글 정보 -->
+          <div class="flex-grow">
+            <!-- 제목 -->
+            <h2 class="text-lg font-semibold text-gray-900">
+              <a th:href="@{/study/{id}(id=${study.studyId})}" class="hover:text-blue-500" th:text="${study.title}"></a>
+            </h2>
+
+            <!-- 날짜 -->
+            <p th:text="|생성일 : ${study.lastModifiedString}         마감일: ${study.endDate}|"
+               class="text-gray-500 text-sm font-medium">
+            </p>
+
+            <div class="flex space-x-4">
+              <div class="relative mt-2">
+                <button onclick="toggleDropdown(this)"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg focus:outline-none hover:bg-gray-200">신청자
+                  목록 보기</button>
+                <span th:text="${study.applicants != null && !study.applicants.isEmpty() ? '신청자가 존재합니다.' : ''}"
+                      class="ml-2 text-sm text-green-600">
+                </span>
+                <div class="absolute left-0 z-10 hidden w-56 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg dropdown-menu" role="menu">
+                  <ul>
+                    <li th:if="${study.applicants == null || study.applicants.isEmpty()}" class="px-4 py-2 text-sm text-gray-500">
+                      신청자가 존재하지 않습니다.
+                    </li>
+                    <li th:each="applicant : ${study.applicants}">
+                      <div class="flex items-center justify-between px-4 py-2 border-b border-gray-100">
+                        <span class="text-gray-700 text-sm font-semibold" th:text="${applicant.nickname}"></span>
+                        <div class="flex space-x-2">
+                          <!-- 신청 폼 보기 -->
+                          <a th:href="@{/study/apply/view(memberId=${applicant.id},formId=${study.formId}, page=${pageNumber})}"
+                             th:if="${study.formId != null}"
+                             class="text-sm text-blue-600 hover:text-blue-800">
+                            폼 보기
+                          </a>
+                          <!-- 승인 버튼 -->
+                          <a th:href="@{/study/applicant/approve-view(memberId=${applicant.id},studyId=${study.studyId}, page=${pageNumber})}"
+                             onclick="onFormSubmit(event)"
+                             class="text-sm text-green-600 hover:text-green-800">
+                            승인
+                          </a>
+                          <!-- 거부 버튼 -->
+                          <a th:href="@{/study/applicant/reject-view(memberId=${applicant.id},studyId=${study.studyId}, page=${pageNumber})}"
+                             onclick="onRejectFormSubmit(event)"
+                             class="text-sm text-red-600 hover:text-red-800">
+                            거부
+                          </a>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="relative mt-2">
+                <button onclick="toggleDropdown(this)" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg focus:outline-none hover:bg-gray-200">승인된
+                  사용자 목록 보기
+                </button>
+                <span></span>
+                <div class="absolute left-0 z-10 hidden w-56 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg dropdown-menu" role="menu">
+                  <ul>
+                    <li th:if="${study.approvalApplicants == null || study.approvalApplicants.isEmpty()}"
+                        class="px-4 py-2 text-sm text-gray-500">
+                      승인된 사용자가 존재하지 않습니다.
+                    </li>
+                    <li th:each="applicant : ${study.approvalApplicants}">
+                      <div
+                              class="flex items-center justify-between px-4 py-2 border-b border-gray-100">
+                                                <span class="text-gray-700 text-sm font-semibold"
+                                                      th:text="${applicant.nickname}"></span>
+                        <div class="flex space-x-2">
+                          <a th:href="@{/study/apply/view/readonly(memberId=${applicant.id},formId=${study.formId})}"
+                             th:if="${study.formId != null}"
+                             class="text-sm text-blue-600 hover:text-blue-800">
+                            폼 보기
+                          </a>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="relative mt-2">
+                <button onclick="toggleDropdown(this)" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg focus:outline-none hover:bg-gray-200">거부된 신청자 목록 보기</button>
+                <span></span>
+                <div class="absolute left-0 z-10 hidden w-56 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg dropdown-menu"
+                     role="menu">
+                  <ul>
+                    <li th:if="${study.rejectedApplicants == null || study.rejectedApplicants.isEmpty()}"
+                        class="px-4 py-2 text-sm text-gray-500">
+                      거부된 사용자가 존재하지 않습니다.
+                    </li>
+                    <li th:each="applicant : ${study.rejectedApplicants}">
+                      <div class="flex items-center justify-between px-4 py-2 border-b border-gray-100">
+                        <span class="text-gray-700 text-sm font-semibold" th:text="${applicant.nickname}"></span>
+                        <div class="flex space-x-2">
+                          <a th:href="@{/study/form/view/readonly(memberId=${applicant.id},formId=${study.formId})}"
+                             th:if="${study.formId != null}"
+                             class="text-sm text-blue-600 hover:text-blue-800">
+                            폼 보기
+                          </a>
+                          <a th:href="@{/study/applicant/approve-view(memberId=${applicant.id},studyId=${study.studyId}, page=${pageNumber})}"
+                             onclick="onFormSubmit(event)"
+                             class="text-sm text-green-600 hover:text-green-800">
+                            재승인
+                          </a>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+
+
+  </div>
+</section>
+<script src="/js/profile/profile_table.js"></script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/study_layout :: layout(~{::title},~{::section}, ~{::script})}">
+<head>
+    <title>스터디 등록</title>
+</head>
+<body>
+<section class="flex flex-col items-center justify-center mt-8">
+
+    <form th:object="${form}"
+          th:action="@{/study}"
+          method="post"
+          id="quill_form"
+          class="w-full max-w-screen-xl flex flex-col lg:flex-row lg:space-x-4 space-y-4 lg:space-y-0 px-4 lg:px-0">
+        <div class="flex-2 bg-white p-6 rounded-lg shadow-sm w-full">
+            <h2 class="text-2xl font-bold mb-4">스터디 만들기</h2>
+
+            <div class="mb-4">
+                <div class="flex items-center justify-between">
+                    <input type="text"
+                           id="title"
+                           name="title"
+                           class="block w-2/3 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           placeholder="스터디 제목을 입력하세요">
+                    <button type="submit" class="ml-4 px-4 py-2 bg-blue-500 text-white font-medium rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        등록하기
+                    </button>
+                </div>
+                <div class="text_warn" id="error_title"></div>
+            </div>
+
+            <!-- 인원수 선택 -->
+            <div class="mb-4">
+                <label for="groupSize" class="block text-sm font-medium text-gray-700 mb-1">인원수</label>
+                <select id="groupSize"
+                        class="block w-full bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
+                    <option value="" selected>스터디에 참여할 수 있는 최대 인원수를 선택해주세요!</option>
+                    <option th:each="number : ${#numbers.sequence(1, 20)}" th:value="${number}" th:text="|최대 인원수 ${number} 명|"></option>
+
+                </select>
+                <div class="text_warn" id="error_groupSize"></div>
+            </div>
+
+            <!-- 마감 일자 선택 -->
+            <div class="mb-4">
+                <label for="date" class="block text-sm font-medium text-gray-700 mb-1">마감 일자 선택</label>
+                <input type="date" id="date" name="date"
+                       class="block w-full bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                       th:value="${today}">
+                <div class="text_warn" id="error_date"></div>
+            </div>
+
+            <!-- 관심 지역 선택 -->
+            <div class="mb-4">
+                <label for="regions" class="block text-sm font-medium text-gray-700 mb-1">관심 지역</label>
+                <select id="regions"
+                        class="block w-full bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
+                    <option value="" selected>관심 지역을 선택해주세요!</option>
+                    <option th:each="selectedRegion : ${selectedRegions}" th:value="${selectedRegion.code}" th:text="|★ ${selectedRegion.text}|"></option>
+                    <option th:each="region : ${regions}" th:value="${region.code}" th:text="${region.text}"></option>
+                </select>
+                <div class="text_warn" id="error_region"></div>
+            </div>
+
+            <!-- 관심 분야 선택 -->
+            <div class="mb-4">
+                <label for="categories" class="block text-sm font-medium text-gray-700 mb-1">관심 분야</label>
+                <select id="categories"
+                        class="block w-full bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
+                    <option value="" selected>관심 분야를 선택해주세요!</option>
+                    <option th:each="selectedCategory : ${selectedCategories}" th:value="${selectedCategory.code}" th:text="|★ ${selectedCategory.text}|"></option>
+                    <option th:each="category : ${categories}" th:value="${category.code}" th:text="${category.text}"></option>
+                </select>
+                <div class="text_warn" id="error_categories"></div>
+            </div>
+
+
+            <!-- 선택된 항목 표시 -->
+            <div id="selected" class="mb-4 flex flex-wrap mt-4 bg-gray-100 border border-gray-300 rounded-lg p-4">
+
+            </div>
+
+            <!-- Quill 에디터 -->
+            <div class="text_warn" id="error_contents"></div>
+            <div id="editor" class="mt-4"></div>
+
+        </div>
+    </form>
+</section>
+<script src="/js/study/custom_quill.js"></script>
+</body>
+</html>

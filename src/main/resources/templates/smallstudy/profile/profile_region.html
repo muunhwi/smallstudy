@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/profile_layout :: layout(~{::section}, ~{::script})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/output.css" rel="stylesheet"/>
+    <title>프로필</title>
+</head>
+<body>
+
+<section  class="w-full lg:flex-grow bg-white border border-gray-200 p-8 rounded-lg shadow-md">
+    <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">관심지역 설정</h2>
+
+    <div th:if="${selectedList != null} and ${!#lists.isEmpty(selectedList)}"
+         class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
+    <span class="block text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+        선택된 관심지역
+    </span>
+        <div class="flex flex-wrap">
+            <div th:each="badge, iterStat : ${selectedList}">
+                <form th:action="@{/profile/region-delete}" method="get" class="space-y-6 w-50">
+                        <input type="hidden" th:name="code" th:value="${badge.code}" />
+                        <span th:id="${badge.code}"
+                              class="inline-flex items-center px-2 py-1 me-2 text-sm font-medium text-yellow-800 bg-yellow-100 rounded dark:bg-yellow-900 dark:text-yellow-300">
+                        <span th:text="${badge.text}">Yellow</span>
+                        <button type="submit"
+                                class="inline-flex items-center p-1 ms-2 text-sm text-yellow-400 bg-transparent rounded-sm hover:bg-yellow-200 hover:text-yellow-900 dark:hover:bg-yellow-800 dark:hover:text-yellow-300"
+                                aria-label="Remove">
+                            <svg class="w-2 h-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                            </svg>
+                            <span class="sr-only">Remove badge</span>
+                        </button>
+                    </span>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <form th:action="@{/profile/region}" method="post" class="space-y-6" th:object="${region_form}">
+        <select id="countries" th:field="*{code}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <option value="" disabled selected>관심 지역</option>
+            <option th:each="region : ${list}" th:value="${region.code}" th:text="${region.text}"></option>
+        </select>
+        <div class="text-red-600 text-sm mt-1" th:errors="*{code}">지역오류</div>
+        <!-- 버튼 -->
+        <div class="flex mt-6">
+            <button type="submit" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none">
+                등록하기
+            </button>
+        </div>
+    </form>
+</section>
+<script></script>
+</body>
+</html>

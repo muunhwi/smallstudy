@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/profile_layout :: layout(~{::section}, ~{::script})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/output.css" rel="stylesheet"/>
+    <title>프로필</title>
+</head>
+<body>
+    <!-- 회원 가입 폼 -->
+    <section  class="w-full lg:flex-grow bg-white border border-gray-200 p-8 rounded-lg shadow-md">
+        <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">내 프로필</h2>
+
+        <div th:if="${complete != null}" id="complete" class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+            <span class="font-medium">수정 완료!</span>
+        </div>
+
+        <form th:object="${form}" th:action="@{/profile}" enctype="multipart/form-data" method="post" class="space-y-6" onSubmit="return confirmAndSubmit(event)">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+            <!-- 파일 업로드 -->
+            <div class="bg-gray-50 rounded-lg shadow-md p-6 flex flex-wrap sm:flex-nowrap items-start space-x-6">
+                <!-- 프로필 사진 영역 -->
+                <div class="w-full sm:w-auto flex-shrink-0">
+                    <img id="profileImagePreview"
+                         th:if="${#authentication.getPrincipal().imageFilePath != null}"
+                         th:src="${@fileService.getImageFilePath(#authentication.getPrincipal())}"
+                         class="w-32 h-32 rounded-full object-cover border"
+                         alt="User Profile Image">
+
+                    <img id="profileImagePreview"
+                         th:if="${#authentication.getPrincipal().imageFilePath == null}"
+                         th:src="@{/img/default.png}"
+                         class="w-32 h-32 rounded-full object-cover border"
+                         alt="Default Profile Image">
+                </div>
+
+                <!-- 텍스트 설명 영역 -->
+                <div class="flex-grow mt-4 sm:mt-0">
+                    <h2 class="text-lg font-semibold">프로필 사진</h2>
+                    <p class="text-xs text-gray-500 mb-4">
+                        98x98픽셀 이상, 5MB 이하의 사진이 권장됩니다. JPG, JPGE, PNG 또는 GIF(애니메이션 GIF 제외) 파일을 사용하세요.
+                    </p>
+
+                    <!-- 버튼 그룹 -->
+                    <div class="flex space-x-4">
+                        <!-- 변경 버튼 -->
+                        <label for="profileImage" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-300 focus:outline-none">
+                            변경
+                        </label>
+                    </div>
+
+                    <div th:if="${image_type_error}">
+                        <span class="text-red-600 text-sm mt-1" th:text="${image_type_error}"></span>
+                    </div>
+
+                </div>
+                <!-- 파일 선택 input (숨김 처리) -->
+                <input id="profileImage" th:field="*{profileImage}" type="file" class="hidden" accept="image/*" />
+            </div>
+
+            <!-- 별명 입력 -->
+            <div class="mb-4">
+                <label for="nickname" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">닉네임</label>
+                <input type="text" id="nickname" th:field="*{nickname}" placeholder="Enter your nickname" class="w-full max-w-xs p-2 block text-gray-900 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
+                <div class="text-red-600 text-sm mt-1" th:errors="*{nickname}">닉네임 오류</div>
+            </div>
+
+            <!-- 소개 입력 -->
+            <div class="mb-4">
+                <label for="message" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">소개</label>
+                <input type="text" id="message" th:field="*{message}" placeholder="Enter your introduction" class="w-full max-w-xs p-2 block text-gray-900 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
+                <div class="text-red-600 text-sm mt-1" th:errors="*{message}">소개 오류</div>
+            </div>
+
+            <!-- 버튼 -->
+            <div class="flex mt-6">
+                <button type="submit" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none">
+                    수정하기
+                </button>
+            </div>
+        </form>
+    </section>
+    <script src="/js/profile/profile_events.js"></script>
+</body>
+</html>
