@@ -10,7 +10,9 @@ Environment
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)](https://www.mysql.com/)
-[![H2](https://img.shields.io/badge/H2-003545?style=flat-square&logo=h2&logoColor=white)](https://h2database.com/)  
+[![H2](https://img.shields.io/badge/H2-003545?style=flat-square&logo=h2&logoColor=white)](https://h2database.com/)
+[![Spring Security](https://img.shields.io/badge/Spring%20Security-6DB33F?style=flat-square&logo=spring-security&logoColor=white)](https://spring.io/projects/spring-security)
+[![JPA](https://img.shields.io/badge/JPA-FF6F00?style=flat-square&logo=hibernate&logoColor=white)](https://hibernate.org/)  
 Cloud & Deployment  
 [![Amazon EC2](https://img.shields.io/badge/Amazon%20EC2-FF9900?style=flat-square&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/ec2/)
 [![NGINX](https://img.shields.io/badge/NGINX-009639?style=flat-square&logo=nginx&logoColor=white)](https://www.nginx.com/)
